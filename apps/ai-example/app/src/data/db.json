@@ -1,0 +1,24 @@
+{
+  "users": [
+    { "id": "u1", "name": "Alice Martin", "email": "alice@demo.local", "role": "admin", "createdAt": "2025-01-10T08:00:00.000Z" },
+    { "id": "u2", "name": "Bob Chen", "email": "bob@demo.local", "role": "user", "createdAt": "2025-02-14T09:30:00.000Z" },
+    { "id": "u3", "name": "Carol Davis", "email": "carol@demo.local", "role": "user", "createdAt": "2025-03-01T11:00:00.000Z" },
+    { "id": "u4", "name": "David Kim", "email": "david@demo.local", "role": "moderator", "createdAt": "2025-04-05T14:00:00.000Z" },
+    { "id": "u5", "name": "Eva Rossi", "email": "eva@demo.local", "role": "user", "createdAt": "2025-05-20T16:45:00.000Z" },
+    { "id": "u6", "name": "Frank Müller", "email": "frank@demo.local", "role": "user", "createdAt": "2025-06-12T10:15:00.000Z" },
+    { "id": "u7", "name": "Grace Okello", "email": "grace@demo.local", "role": "user", "createdAt": "2025-07-08T13:00:00.000Z" },
+    { "id": "u8", "name": "Hiro Tanaka", "email": "hiro@demo.local", "role": "admin", "createdAt": "2025-08-22T08:30:00.000Z" }
+  ],
+  "products": [
+    { "id": "p1", "name": "Cloud Storage Pro", "price": 9.99, "category": "software", "stock": 999, "createdAt": "2025-01-01T00:00:00.000Z" },
+    { "id": "p2", "name": "Monitoring Suite", "price": 29.99, "category": "software", "stock": 999, "createdAt": "2025-01-01T00:00:00.000Z" },
+    { "id": "p3", "name": "Dev Laptop 14\"", "price": 1299.00, "category": "hardware", "stock": 42, "createdAt": "2025-02-01T00:00:00.000Z" },
+    { "id": "p4", "name": "Mechanical Keyboard", "price": 149.00, "category": "hardware", "stock": 85, "createdAt": "2025-02-15T00:00:00.000Z" },
+    { "id": "p5", "name": "4K Monitor 27\"", "price": 499.00, "category": "hardware", "stock": 23, "createdAt": "2025-03-01T00:00:00.000Z" },
+    { "id": "p6", "name": "API Gateway Plan", "price": 49.99, "category": "software", "stock": 999, "createdAt": "2025-03-10T00:00:00.000Z" },
+    { "id": "p7", "name": "USB-C Hub 7-in-1", "price": 59.99, "category": "hardware", "stock": 150, "createdAt": "2025-04-01T00:00:00.000Z" },
+    { "id": "p8", "name": "Log Analytics Add-on", "price": 19.99, "category": "software", "stock": 999, "createdAt": "2025-04-15T00:00:00.000Z" },
+    { "id": "p9", "name": "Ergonomic Chair", "price": 399.00, "category": "furniture", "stock": 18, "createdAt": "2025-05-01T00:00:00.000Z" },
+    { "id": "p10", "name": "Standing Desk", "price": 699.00, "category": "furniture", "stock": 12, "createdAt": "2025-06-01T00:00:00.000Z" }
+  ]
+}
