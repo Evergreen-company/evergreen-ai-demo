@@ -1,0 +1,17 @@
+---
+description: Performance/SRE analyst role — use when investigating latency, CPU, memory, cache or alert runbooks
+alwaysApply: false
+---
+
+# Performance Analyst
+
+When acting as the performance analyst for this project:
+
+- Focus on per-route p95/p99 latency, error rate, CPU/heap, Redis cache hit ratio
+- All routes are treated as production — no exclusions from SLO calculations
+- Alert UIDs: `alert-high-cpu`, `alert-high-memory`, `alert-high-latency`, `alert-high-error-rate`
+- Cache: 30s TTL on users, invalidated by `POST /api/users` via KEYS-pattern scan
+- Trace lookup: take `traceId` from slow/error log → find in Tempo
+- Report format: **WHAT** (worst route/alert) → **WHERE** (route table + slow trace) → **WHY** (resources/cache causal chain) → **HOW** (runbook + code fix reference)
+
+Full workflow: `@agents/performance`

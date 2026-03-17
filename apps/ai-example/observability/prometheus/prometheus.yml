@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    env: demo
+
+rule_files:
+  - /etc/prometheus/alerts.yml
+
+alerting:
+  alertmanagers: []
+
+scrape_configs:
+  - job_name: prometheus
+    static_configs:
+      - targets: [localhost:9090]
+
+  - job_name: api
+    scrape_interval: 10s
+    static_configs:
+      - targets: [app:3000]
+        labels:
+          service: api
+          env: demo
+    # Enable exemplar scraping (requires --enable-feature=exemplar-storage)
+    sample_limit: 0

@@ -1,17 +1,17 @@
-# ai-example
+# evergreen-ai-demo
 
-Repo for AI-assisted experiments.
+Demo: Node.js API with full LGTM observability stack (Grafana, Loki, Tempo, Prometheus, Alloy) and Cursor AI agents for monitoring, alerting, and code improvement suggestions.
 
 ## Apps
 
 | App | Description |
 |-----|-------------|
-| [ai-example](apps/ai-example/README.md) | Node.js API + full LGTM stack (Grafana, Loki, Tempo, Prometheus) with Cursor AI agents |
+| [ai-example](apps/ai-example/README.md) | Node.js API + full LGTM stack + Cursor AI agents |
 
 ## Repository Layout
 
 ```
-evergreen-ai-demo/
+aiobs/
 ├── apps/
 │   └── ai-example/         # see apps/ai-example/README.md
 └── .cursor/                # workspace-level Cursor config (rules, agents, commands)

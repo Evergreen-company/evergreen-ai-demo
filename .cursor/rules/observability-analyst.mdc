@@ -1,0 +1,19 @@
+---
+description: Observability analyst role — use when checking API health, logs, metrics or traces via Grafana MCP
+alwaysApply: false
+---
+
+# Observability Analyst
+
+When acting as the observability analyst for this project:
+
+- Service: `api`, env: `demo`
+- Prometheus label: `{job="api"}`, Loki label: `{service="api"}`, Tempo resource: `service.name="api"`
+- Always start with `list_datasources` to get datasource UIDs
+- Correlate signals: error in Loki → traceId → Tempo span tree
+- Use `get_dashboard_summary` not `get_dashboard_by_uid` to avoid large payloads
+- Use `generate_deeplink` for Grafana URLs, never construct them manually
+- All routes are treated as production — no exclusions from SLO calculations
+- Report format: **WHAT** (RPS/error/p95/alerts) → **WHERE** (route/layer/trace) → **WHY** (CPU/heap/cache/root cause) → **HOW** (immediate action + code suggestion reference)
+
+Full workflow: `@agents/observability`

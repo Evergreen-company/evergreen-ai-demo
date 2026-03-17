@@ -1,0 +1,70 @@
+groups:
+  - name: api_alerts
+    interval: 30s
+    rules:
+
+      # Demo alert: low threshold so it fires under normal load (indicative).
+      - alert: HighCpuUsage
+        expr: rate(process_cpu_seconds_total{job="api"}[1m]) > 0.05
+        for: 1m
+        labels:
+          severity: warning
+          service: api
+          env: demo
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value | humanizePercentage }} (threshold: 5%, demo)."
+
+      - alert: HighHeapMemory
+        expr: nodejs_heap_size_used_bytes{job="api"} > 209715200
+        for: 2m
+        labels:
+          severity: warning
+          service: api
+          env: demo
+        annotations:
+          summary: "High heap memory on {{ $labels.instance }}"
+          description: "Heap used is {{ $value | humanize1024 }}B (threshold: 200MB) for more than 2 minutes."
+
+      - alert: HighAvgResponseTime
+        expr: |
+          (
+            rate(http_request_duration_seconds_sum{job="api"}[5m])
+            /
+            rate(http_request_duration_seconds_count{job="api"}[5m])
+          ) > 2
+        for: 2m
+        labels:
+          severity: warning
+          service: api
+          env: demo
+        annotations:
+          summary: "High average response time on {{ $labels.route }}"
+          description: "Average response time is {{ $value | humanizeDuration }} (threshold: 2s) on route {{ $labels.route }}."
+
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(http_requests_total{job="api", status_code=~"5.."}[5m])
+            /
+            rate(http_requests_total{job="api"}[5m])
+          ) > 0.15
+        for: 2m
+        labels:
+          severity: critical
+          service: api
+          env: demo
+        annotations:
+          summary: "High error rate on {{ $labels.route }}"
+          description: "Error rate is {{ $value | humanizePercentage }} (threshold: 15%) on route {{ $labels.route }}."
+
+      - alert: AppDown
+        expr: up{job="api"} == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: api
+          env: demo
+        annotations:
+          summary: "API is down"
+          description: "The API instance {{ $labels.instance }} has been unreachable for more than 30 seconds."

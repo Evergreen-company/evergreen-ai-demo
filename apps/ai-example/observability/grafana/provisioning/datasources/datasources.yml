@@ -1,0 +1,80 @@
+apiVersion: 1
+
+datasources:
+
+  - name: Prometheus
+    type: prometheus
+    uid: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    jsonData:
+      timeInterval: "15s"
+      exemplarTraceIdDestinations:
+        - name: traceId
+          datasourceUid: tempo
+    version: 1
+    editable: false
+
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: http://loki:3100
+    jsonData:
+      derivedFields:
+        # traceId is stored as Loki structured metadata by Alloy.
+        # matcherType: label reads it directly without regex scanning the log line.
+        - name: TraceID
+          matcherType: label
+          matcherValue: traceId
+          url: "${__value.raw}"
+          datasourceUid: tempo
+          urlDisplayLabel: "View Trace in Tempo"
+      maxLines: 1000
+    version: 1
+    editable: false
+
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    version: 2
+    editable: true
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: loki
+        spanStartTimeShift: "-1m"
+        spanEndTimeShift: "1m"
+        tags:
+          - key: service.name
+            value: service
+        filterByTraceID: false
+        filterBySpanID: false
+        # service="api" is hardcoded — resource.service.name doesn't resolve
+        # dynamically via $${__tags} in Grafana 12.x provisioning YAML.
+        # | traceId uses Loki structured metadata (set by Alloy) for exact match.
+        # $$ is required in YAML provisioning: $${x} → ${x} after Grafana loads it.
+        customQuery: true
+        query: '{service="api"} | traceId = "$${__span.traceId}"'
+      tracesToMetrics:
+        datasourceUid: prometheus
+        spanStartTimeShift: "-1m"
+        spanEndTimeShift: "1m"
+        tags:
+          - key: service.name
+            value: service
+        queries:
+          - name: Request Rate
+            query: 'rate(http_requests_total{job="api"}[5m])'
+          - name: Error Rate
+            query: 'rate(http_requests_total{job="api",status_code=~"[45].."}[5m])'
+          - name: P99 Latency
+            query: 'histogram_quantile(0.99, rate(http_request_duration_seconds_bucket{job="api"}[5m]))'
+      serviceMap:
+        datasourceUid: prometheus
+      search:
+        hide: false
+      nodeGraph:
+        enabled: true

@@ -1,0 +1,206 @@
+apiVersion: 1
+
+groups:
+  - orgId: 1
+    name: API Alerts
+    folder: Demo Alerts
+    interval: 1m
+    rules:
+
+      # Demo: low threshold (5%) so alert fires under normal load.
+      # A: range query → B: reduce to single value → C: threshold on B
+      - uid: alert-high-cpu
+        title: High CPU Usage
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: rate(process_cpu_seconds_total{job="api"}[1m])
+              refId: A
+              instant: false
+              range: true
+          - refId: B
+            datasourceUid: "__expr__"
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            datasourceUid: "__expr__"
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    params: [0.05]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [B]
+                  reducer:
+                    type: last
+                  type: query
+        for: 1m
+        annotations:
+          summary: High CPU usage detected
+          description: "CPU rate is above 5% (demo threshold) for more than 1 minute."
+        labels:
+          severity: warning
+          service: api
+          env: demo
+        noDataState: NoData
+        execErrState: Error
+
+      - uid: alert-high-memory
+        title: High Heap Memory
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 300
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: nodejs_heap_size_used_bytes{job="api"}
+              refId: A
+              instant: false
+              range: true
+          - refId: B
+            datasourceUid: "__expr__"
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            datasourceUid: "__expr__"
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    params: [209715200]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [B]
+                  reducer:
+                    type: last
+                  type: query
+        for: 2m
+        annotations:
+          summary: High heap memory usage
+          description: "Node.js heap exceeds 200MB for more than 2 minutes."
+        labels:
+          severity: warning
+          service: api
+          env: demo
+        noDataState: NoData
+        execErrState: Error
+
+      - uid: alert-high-latency
+        title: High Avg Response Time
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: "rate(http_request_duration_seconds_sum{job=\"api\"}[5m]) / rate(http_request_duration_seconds_count{job=\"api\"}[5m])"
+              refId: A
+              instant: false
+              range: true
+          - refId: B
+            datasourceUid: "__expr__"
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            datasourceUid: "__expr__"
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    params: [2]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [B]
+                  reducer:
+                    type: last
+                  type: query
+        for: 2m
+        annotations:
+          summary: High average response time
+          description: "Average response time exceeded 2s for more than 2 minutes."
+        labels:
+          severity: warning
+          service: api
+          env: demo
+        noDataState: NoData
+        execErrState: Error
+
+      - uid: alert-high-error-rate
+        title: High Error Rate
+        condition: C
+        data:
+          - refId: A
+            relativeTimeRange:
+              from: 600
+              to: 0
+            datasourceUid: prometheus
+            model:
+              expr: "rate(http_requests_total{job=\"api\",status_code=~\"5..\"}[5m]) / rate(http_requests_total{job=\"api\"}[5m])"
+              refId: A
+              instant: false
+              range: true
+          - refId: B
+            datasourceUid: "__expr__"
+            model:
+              refId: B
+              type: reduce
+              expression: A
+              reducer: last
+          - refId: C
+            datasourceUid: "__expr__"
+            model:
+              refId: C
+              type: threshold
+              expression: B
+              conditions:
+                - evaluator:
+                    params: [0.15]
+                    type: gt
+                  operator:
+                    type: and
+                  query:
+                    params: [B]
+                  reducer:
+                    type: last
+                  type: query
+        for: 2m
+        annotations:
+          summary: High 5xx error rate
+          description: "5xx error rate exceeded 15% for more than 2 minutes."
+        labels:
+          severity: critical
+          service: api
+          env: demo
+        noDataState: NoData
+        execErrState: Error

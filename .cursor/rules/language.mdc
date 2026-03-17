@@ -1,0 +1,15 @@
+---
+description: Language policy — all agent responses and reports must be in English
+alwaysApply: true
+---
+
+# Language Policy
+
+All responses, reports, and dialogue in this workspace must be in English only.
+
+- Agent output: English
+- Report sections (WHAT / WHERE / WHY / HOW): English
+- Inline comments and explanations: English
+- Error messages and analysis: English
+
+This applies regardless of the language the user writes in.
