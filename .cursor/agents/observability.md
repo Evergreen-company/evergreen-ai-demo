@@ -1,3 +1,7 @@
+---
+description: "Observability — collects metrics, logs, traces, alerts. Answers WHAT/WHERE/WHY/HOW for system health"
+---
+
 # Observability Agent
 
 **Role:** System health monitor for the `api` service.

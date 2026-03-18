@@ -1,0 +1,150 @@
+---
+description: "Business Guide — 4-phase docs (general guide, use cases, process flows, test cases). Output: docs/business-guides/"
+globs: docs/business-guides/**/*.md
+alwaysApply: false
+activationKeywords: ["business guide", "business-guide", "business_guide", "architecture overview", "use cases", "module description", "process flows", "test cases"]
+---
+# Business Guide Document Rule (4‑Phase)
+
+## Description
+Rule for creating and maintaining business-guide documents (system overview, architecture, business scenarios, use cases, and testing). Automatically activated when creating/updating business guides, architecture overviews, module descriptions, or files containing "business-guide", "business_guide" in the name, or structured use case scenarios for any software module or subsystem.
+
+## Rule
+
+### When to use this rule
+- ✅ When preparing a business guide for a new/existing module
+- ✅ When describing architecture, directory structure, key components and their Use Cases
+- ✅ When providing a verification checklist and test scenarios
+- ❌ When the document is a short release note or API reference (use their profile rules)
+
+### 4‑phase structure and artifacts
+Instead of a single file, the guide is split into 4 separate documents. Each document has its own template and content. All files are stored in `/docs/business-guides/[moduleName]/` and subdirectories.
+
+**IMPORTANT** — the module has technical names and client-facing names. Use the format {Client-facing name} (technical module name) for headings and general descriptions.
+
+1) General Guide: `/docs/business-guides/[moduleName]/[moduleName]-general-guide.md`
+```markdown
+# [ModuleName] — General Guide
+
+## Overview and Purpose
+- Brief module description, role in the product
+- Brief business value and how personas use it
+
+## System Architecture
+### Directory Structure
+```
+[directory tree with key project files]
+```
+
+### Navigation & Entry Points
+- Routes, screens, entry points, API endpoints (adapt to project type)
+
+### Permissions & Access Control
+- Permissions, roles, access bindings
+
+### Localization (if applicable)
+- Supported languages, translation namespaces
+
+### Security & Compliance (if applicable)
+- Auth tokens, headers, policies
+
+## Components and Purpose
+For each key component:
+- `[ComponentName]` — 3–5 bullet points "what it solves"
+
+## Business Scenarios
+3–5 scenarios in format: "Scenario → Solution → Result"
+
+```
+
+2) Use Cases: `/docs/business-guides/[moduleName]/use-cases/[componentName]-use-cases.md`
+
+Write only for components that have user-interactive elements (UI, CLI, API). Do not describe what does not happen; do not invent.
+
+```markdown
+# [ModuleName] - [componentName] — Use Cases
+
+## Use Case Pattern (required)
+1. [Name] → [business result]
+   - User …
+   - System …
+   - Interface …
+   - Expected result: …
+   - Possible errors and issues (and what is handled by component code — describe component behavior)
+
+2. ...Next component
+```
+
+3) Process flow `/docs/business-guides/[moduleName]/[moduleName]-process-flows.md`
+
+Write only for flows that have user-interactive elements. Do not describe what does not happen; do not invent.
+
+```markdown
+# [ModuleName] — Process flows
+
+## Process Flow Pattern (required)
+1. [Name] → [business result]
+    Metadata:
+    - Actors:
+    - Goal:
+    - Start:
+    - End:
+
+    ## Steps in Event - Action format:
+    Event:
+    Action:
+
+    ## Mermaid diagram
+
+2. ...next process
+```
+
+
+**Metrics Coverage Check (if analytics exist):**
+If the project has behavior/analytics tooling, after describing Use Cases and Process Flows:
+- Check whether described interactions have corresponding analytics events.
+- If not, add a "Recommended Behavior Metrics" section with proposed events (name, type, description).
+- This is a RECOMMENDATION only — do not modify analytics config directly.
+
+4) Test Cases: `/docs/business-guides/[moduleName]/test-cases/[componentName]-test-cases.md`
+```markdown
+# [componentName] — Test Cases
+
+1. ## Test Case Pattern (required)
+- Goal: …
+- Steps: …
+- Acceptance criteria: …
+
+## Components
+### [ComponentName]
+- Set of test cases (Load, Performance, UX, Errors)
+
+### Cross‑module/Integration
+- Navigation, access rights, localization, security (adapt to project)
+
+2. ...Next component
+```
+
+
+
+### Style requirements
+- Use project language for content (UI/code identifiers — in `backticks`)
+- Short, scannable sections; prefer bullet lists
+- Show directory structures as named trees
+- For tables/metrics — clear units of measure
+- Avoid technical details that add no business value; move them to technical guides
+
+
+### Common mistakes
+❌ Overly generic descriptions without Use Cases
+❌ Missing directory tree or key files
+❌ No metrics and acceptance criteria
+❌ Mixing framework-specific instructions without considering the actual stack
+❌ Missing clear results in scenario steps
+
+✅ Each section contains measurable items
+✅ Components have Use Cases with steps and expectations
+✅ Metrics, test groups, and checklist present
+
+# Placement
+- Rule (this file): `.cursor/rules/business-guide-rule.mdc`

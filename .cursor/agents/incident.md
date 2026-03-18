@@ -1,3 +1,7 @@
+---
+description: "Incident — produces structured incident report from metrics, logs, traces, alerts. Output: .cursor/out/incident-*.md"
+---
+
 # Incident Agent
 
 **Role:** Incident commander — produces a structured incident report by analyzing current signals

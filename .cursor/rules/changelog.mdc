@@ -1,0 +1,242 @@
+---
+description: "Changelog — create/update changelog and release metadata. Output: docs/changelog/"
+globs: docs/changelog/**/*.md, docs/changelog/**/*.yaml
+alwaysApply: false
+activationKeywords: ["changelog", "release notes", "release metadata", "task metadata", "CHANGELOG", "release.meta", "upgrade.meta"]
+---
+# Changelog Rule — Universal
+
+## Description
+
+Universal rule for creating and maintaining changelog files and release metadata. Language: English. Output path: `docs/changelog/`. No project-specific paths or artifacts.
+
+---
+
+## Output Path
+
+```
+docs/changelog/
+├── {TASK_NAME}/                    # task/branch name (e.g. PROJ-123, feature-auth)
+│   ├── CHANGELOG.md                # for humans (required)
+│   └── task.meta.yaml              # for automation (recommended)
+│
+└── {RELEASE}/                      # when release is known (e.g. 1.2.3, v2.0)
+    ├── CHANGELOG.md                # release-level changelog
+    ├── release.meta.yaml           # release metadata
+    └── upgrade.meta.yaml           # upgrade steps (optional)
+```
+
+---
+
+## Release Number Detection
+
+**Priority:**
+1. **Explicit** — use value provided by user (e.g. `1.2.3`, `v2.0`)
+2. **Git branch** — `git branch --show-current` → extract from `release/1.2.3`, `release-1.2.3`, `v1.2.3`
+3. **Git tags** — `git tag --sort=-version:refname | head -1`
+4. **Ask user** — if not found
+
+**Normalize for directory names:** use simple format without prefixes (`1.2.3`, not `v1.2.3`).
+
+---
+
+## CHANGELOG.md Structure
+
+### 1. Title (H1)
+
+`# {TASK_NAME}: {Task title} — Changelog`
+
+### 2. Overview (required)
+
+```markdown
+## Overview
+
+**Task:** TASK_NAME
+**Release:** RELEASE_NUMBER (or TBD)
+**Period:** start — end dates (optional)
+**Commits:** count
+**Last commit:** hash
+**Status:** Done / In progress / Cancelled
+```
+
+### 3. Goal (required)
+
+- What was implemented
+- Problem solved
+- Main objective
+
+### 4. Changes by Module (required)
+
+- Group by module/component
+- Use markers: **Added**, **Modified**, **Removed**, **Refactored**, **Fixed**
+- Concrete file names and methods
+- Context: why and what changed
+
+**Format:**
+```markdown
+## Changes by Module
+
+### Module Name (`path/to/module/`)
+
+#### `filename.js`
+- **Added method `methodName()`**
+  - What it does
+  - Where used
+
+- **Modified `existingMethod()`**
+  - What changed
+  - Why
+```
+
+### 5. Technical Improvements (if applicable)
+
+- Optimizations, refactoring, error handling
+
+### 6. Configuration (if applicable)
+
+- New env vars, feature flags, config params
+
+### 7. Test Scenarios (recommended)
+
+- Main use cases, edge cases
+
+### 8. Statistics (recommended)
+
+- Files changed count
+- Lines added/removed
+- Key files
+
+### 9. Summary (required)
+
+```markdown
+---
+_Last updated: YYYY-MM-DD_
+```
+
+---
+
+## task.meta.yaml Structure
+
+```yaml
+task: TASK_NAME
+release: RELEASE_NUMBER  # or null/TBD
+created_at: YYYY-MM-DD
+
+critical: false
+requires_attention: false
+
+changes:
+  files_modified: []
+  modules_affected: []
+  breaking_changes: false
+
+commits:
+  count: 0
+  first_commit: ""
+  last_commit: ""
+
+risk:
+  level: "low"  # low|medium|high|critical
+  notes: ""
+```
+
+**For critical tasks:** set `critical: true`, `requires_attention: true`, `risk.level: "critical"`.
+
+**For DB schema changes:** add `requires_syncdb: true` and optionally `schema_tables_affected: []`.
+
+---
+
+## release.meta.yaml (release-level)
+
+```yaml
+version: "1.2.3"
+released_at: YYYY-MM-DD
+
+compatibility:
+  upgrade_from: ">=1.0.0"
+  forbidden_from: []
+
+migrations:
+  schema: []
+  data: []
+
+risk:
+  level: "low"
+  notes: ""
+```
+
+---
+
+## upgrade.meta.yaml (optional)
+
+```yaml
+version: "1.2.3"
+upgrade_from: ">=1.0.0"
+
+steps:
+  - step: 1
+    name: "Backup"
+    required: true
+    description: "Create backup"
+    estimated_duration: "10 min"
+
+rollback:
+  possible: true
+  steps: []
+  estimated_duration: "15 min"
+```
+
+---
+
+## Workflows
+
+### Create
+
+1. Determine TASK_NAME from `git branch --show-current` (or ask user)
+2. Determine RELEASE_NUMBER (detection rules above, or TBD)
+3. Create `docs/changelog/{TASK_NAME}/`
+4. Create `CHANGELOG.md` with required sections
+5. Create `task.meta.yaml`
+6. Analyze commits and fill content
+
+### Update
+
+1. Read existing `CHANGELOG.md` and `task.meta.yaml`
+2. Analyze new commits since last update
+3. Append new changes to "Changes by Module"
+4. Update overview (commit count, last commit)
+5. Update `task.meta.yaml` if needed
+6. Update last-updated date
+
+### Info (view)
+
+1. Determine TASK_NAME or RELEASE
+2. Read `CHANGELOG.md`, `task.meta.yaml`, `release.meta.yaml` (if exists)
+3. Output formatted summary
+
+---
+
+## Change Markers
+
+| Marker      | Use for                          |
+|-------------|-----------------------------------|
+| **Added**   | New methods, functions, files     |
+| **Modified**| Changes in existing code         |
+| **Removed** | Deleted components               |
+| **Refactored** | Restructure, no behavior change |
+| **Fixed**   | Bug fixes                        |
+
+---
+
+## Constraints
+
+- Git: read-only only (`git log`, `git diff`, `git show`)
+- No project-specific paths or ticket ID patterns
+- Concrete file names and methods — no vague "improved logic"
+- Group changes by module
+
+---
+
+## Placement
+
+- Rule: `.cursor/rules/changelog.mdc`

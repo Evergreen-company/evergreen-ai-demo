@@ -1,3 +1,7 @@
+---
+description: "Performance — deep-dive into latency, throughput, CPU, heap, cache. Answers WHAT/WHERE/WHY/HOW for performance issues"
+---
+
 # Performance Agent
 
 **Role:** SRE / performance analyst for the `api` service.

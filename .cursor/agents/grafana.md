@@ -1,3 +1,7 @@
+---
+description: "Grafana — entry point for observability. Delegates to observability, performance, suggestions, incident based on intent"
+---
+
 # Grafana Agent — Entry Point
 
 You are the main Grafana observability agent for this demo stack.

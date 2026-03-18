@@ -1,0 +1,224 @@
+---
+description: "Task Analysis — fetch task, search docs, produce report and spec. Output: docs/task-analysis/"
+globs: docs/task-analysis/**/*.md
+alwaysApply: false
+activationKeywords: ["task analysis", "task-analysis", "analyze task", "task spec", "specification", "PROJ-", "JIRA-", "analyze issue"]
+---
+# Task Analysis Rule — Universal
+
+## Description
+
+Universal rule for analyzing tasks: fetch task data (from issue tracker or user input), search relevant documentation, produce an analysis report, and after confirmation — a simplified specification for implementation. Language: English. Output path: `docs/task-analysis/`. No project-specific paths or artifacts.
+
+---
+
+## Critical: Read-Only
+
+**Never modify issues** (Jira, Confluence, etc.) without explicit user request.
+- Do not add comments, update descriptions, or change statuses
+- Only read and analyze
+- If changes are needed — ask the user first
+
+---
+
+## Output Path
+
+```
+docs/task-analysis/{task_key}/
+├── report.md         # analysis report (Phase 2)
+└── specification.md  # simplified spec for implementation (Phase 3, after confirmation)
+```
+
+Create the folder before delivering any report.
+
+---
+
+## Phase 1: Get Task Data
+
+### Option A: Issue tracker (Jira via MCP)
+
+If Atlassian MCP is available:
+1. Call `getAccessibleAtlassianResources` for `cloudId` (if required)
+2. Call `getJiraIssue` with `issueIdOrKey` (task key)
+3. Extract: `summary`, `description`, `labels`, `issuetype`, `priority`, `status`, `assignee`, `issuelinks`, comments
+
+### Option B: User input
+
+If no MCP or user provides task directly:
+- Use task key from user (e.g. `PROJ-123`, `feature-auth`)
+- Use summary and description provided by user
+
+### Context
+
+- **task_key:** from issue or user
+- **client:** from task fields or user (optional)
+
+---
+
+## Phase 2: Search and Report
+
+### 2.1 Search in docs
+
+**Where to search** (adapt to repo structure):
+- `docs/` — general documentation
+- `docs/business-guides/` or equivalent
+- Client-specific docs (if client is known)
+- README, guides, product descriptions
+
+**How:**
+- Semantic search by keywords from summary/description
+- Grep for technical terms, module names, integrations
+
+**What to find:**
+- Feature descriptions related to the task
+- Patterns and examples of similar solutions
+- Product limitations
+- Integrations and modules
+
+### 2.2 Report structure
+
+Create `docs/task-analysis/{task_key}/report.md`:
+
+```markdown
+# Task Analysis Report — {task_key}
+
+## Task Goal
+- **Summary:** {from issue/user}
+- **Type:** {issuetype or "Task"}
+- **Understanding:** {2–3 sentence summary}
+
+## Context
+- **Client:** {if any}
+- **Client docs:** {available/not found, path}
+
+## Task Essence
+- **Description:** {structured from description and comments}
+- **Technical details:** {all details from client — do not remove}
+- **Cases/Examples:** {concrete cases, references}
+- **Uncertainties:** {what remains unclear}
+
+## Findings from docs
+- **Relevant:** {what was found, file links}
+- **Searched but empty:** {what was searched, no results}
+
+## Validation
+- **Confidence:** HIGH | MEDIUM | LOW | VERY_LOW
+- **Reasoning:** {why this level}
+- **Sources used:** {list}
+
+## Questions for clarification (if any)
+- {question 1}
+- {question 2}
+```
+
+### 2.3 Confidence levels
+
+| Level     | Meaning |
+|-----------|---------|
+| **HIGH**  | Exact answer found in docs, task is clear |
+| **MEDIUM** | Partial info from several sources |
+| **LOW**   | Uncertain, inference from context |
+| **VERY_LOW** | Cannot find answer in docs — **do not invent** |
+
+### 2.4 Show to user
+
+1. Show `report.md` to the user
+2. Ask: **"Is this correct? Any clarifications needed?"**
+3. If user requests changes — update `report.md` and show again
+4. **Phase 3 only after confirmation** ("correct", "ok", "yes")
+
+---
+
+## Phase 3: Specification (after confirmation)
+
+**Entry condition:** User confirmed the report is correct.
+
+### 3.1 Purpose
+
+Simplified specification describes **WHAT to do** and **HOW** as step-by-step instructions for implementation. Not a technical doc — a "what to do" guide for developer/implementer.
+
+### 3.2 Structure
+
+Create `docs/task-analysis/{task_key}/specification.md`:
+
+```markdown
+# Task Specification — {task_key}
+
+## Context
+- **Task:** {short description}
+- **Client:** {if any}
+
+## What to do
+
+### 1. {Work block name}
+- Step 1: {concrete action}
+- Step 2: {concrete action}
+- Expected result: {what should be achieved}
+
+### 2. {Next block}
+...
+
+### N. Update business guides (required)
+
+- Build or update business guides for all affected modules
+- Follow @.cursor/rules/business-guide-rule.mdc
+- Output: `docs/business-guides/{moduleName}/`
+
+## Important notes
+- {constraints, dependencies}
+- {links to documentation}
+
+## Questions for clarification (if any)
+- {question}
+```
+
+### 3.3 Rules
+
+**Include:**
+- Step-by-step actions (what to do, in what order)
+- Expected results
+- Links to relevant docs
+- Business context (why it's needed)
+
+**Exclude** (simplified spec):
+- Internal task tags (PROJ-xxx) — use neutral wording
+- Architecture details, DB table names, API endpoints
+- Implementation details — only "what", not "how in code"
+
+### 3.4 Business guides (mandatory)
+
+**Always include** in the specification: build or update business guides for affected modules.
+- Follow @.cursor/rules/business-guide-rule.mdc
+- Output: `docs/business-guides/{moduleName}/`
+- Create/update: general guide, use cases, process flows, test cases
+
+### 3.5 Review
+
+1. Save to `docs/task-analysis/{task_key}/specification.md`
+2. Show to user
+3. Ask: **"Is this correct? Any changes before handoff to implementation?"**
+4. If user requests changes — update the file
+
+---
+
+## Workflow Summary
+
+```
+Phase 1: Get task (MCP or user input)
+    ↓
+Phase 2: Search docs → Create report.md → Show to user
+    ↓
+User confirms? ──No──→ Clarify → Update report → Show again
+    ↓ Yes
+Phase 3: Create specification.md (incl. update business guides) → Show for review
+    ↓
+User approves? ──No──→ Changes → Update spec
+    ↓ Yes
+Build/update business guides for affected modules → Ready for implementation
+```
+
+---
+
+## Placement
+
+- Rule: `.cursor/rules/task-analysis.mdc`

@@ -1,3 +1,7 @@
+---
+description: "Suggestions — maps metrics/logs to concrete code changes with file and line references. Output: .cursor/out/suggest-*.md"
+---
+
 # Suggestions Agent
 
 **Role:** Code improvement advisor — maps observable signals to specific codebase changes.

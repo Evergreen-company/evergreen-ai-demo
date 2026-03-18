@@ -1,0 +1,168 @@
+---
+description: "Techwriter — explanation docs with how-to sections. Output: docs/explanations/"
+globs: docs/explanations/**/*.md
+alwaysApply: false
+activationKeywords: ["techwriter", "explanation", "how-to", "explain concept", "documentation", "docs/explanations"]
+---
+# Techwriter Rule — Explanation with How-to Sections
+
+## Description
+
+Universal rule for writing documentation on a single topic: **explanation** (concepts, principles, architecture) with embedded **how-to** sections where step-by-step instructions are needed. Based on the [Diátaxis](https://diataxis.fr/) framework. Language: English. No project-specific paths or artifacts.
+
+---
+
+## When to Use
+
+- Explain a concept, principle, or architecture with practical how-to inserts
+- Document "what it is and why" plus "how to do X" in one coherent article
+- Create topic-focused docs that help understand and act
+
+**When the user asks for a changelog:** Use @.cursor/rules/changelog.mdc instead of this rule.
+
+---
+
+## Document Structure
+
+### 1. Title
+
+**Format:** "About [concept]" or "Understanding [X]" — focus on explanation, not action.
+
+**Good:** "About authentication models", "Understanding the queue processing flow"  
+**Bad:** "Authentication" (too vague), "How to configure auth" (that's pure how-to)
+
+### 2. Introduction
+
+2–4 sentences: what the page covers, why it matters, in what context to read it.
+
+### 3. Context and Problem
+
+- What problem does this concept solve?
+- What constraints or prerequisites exist?
+- Typical use cases
+- External factors that affect the solution
+
+### 4. Core Concepts
+
+Explain key ideas and how they work:
+- Concept 1 — what it is, how it works
+- Concept 2 — what it is, how it works
+- How they interact
+- Diagrams if helpful (Mermaid, flowcharts)
+
+### 5. Approach Options (if alternatives exist)
+
+- Approach A — pros / cons
+- Approach B — pros / cons
+- Why the current choice was made
+- When to use which approach
+
+### 6. How-to Sections (embedded)
+
+Insert how-to blocks **where the reader needs to act**. Each how-to block follows this pattern:
+
+**How-to block structure:**
+
+| Section | Purpose |
+|---------|---------|
+| **Title** | Action-oriented: "How to [do X]" |
+| **When to use** | 2–3 typical situations |
+| **Prerequisites** | What must be set up first (checklist) |
+| **Steps** | One step = one user action. Brief note on what changes after each step |
+| **Result** | What the user gets after completing the steps |
+| **Verification** | How to confirm it worked |
+| **Alternatives** | Other ways to achieve the same (if any) |
+
+**Example how-to insert:**
+
+```markdown
+### How to configure the search index
+
+**When to use:** You need to enable full-text search. You have added new content types.
+
+**Prerequisites:**
+- [ ] Admin access
+- [ ] Search service is running
+
+**Steps:**
+1. Open Settings → Search.
+2. Select the content types to index.
+3. Click Rebuild index — the progress bar shows completion.
+4. Save changes.
+
+**Result:** Search will include the selected content types within a few minutes.
+
+**Verification:** Run a test query for content you know exists. It should appear in results.
+
+**Alternative:** Use the API endpoint `POST /search/rebuild` if you automate indexing.
+```
+
+### 7. Implications and Recommendations
+
+- What this means for implementation
+- Common mistakes and how to avoid them
+- Practical tips for implementers
+
+### 8. Related Documents
+
+Links to:
+- Tutorials (learning from scratch)
+- Reference (parameters, API details)
+- Other explanations or how-tos on related topics
+
+---
+
+## Style
+
+### Explanation parts
+- **Opinion allowed:** "We prefer X over Y because…"
+- **Compare approaches:** explain trade-offs and alternatives
+- **Focus on understanding:** explain "why" and "how it works", not "what to do"
+- **No step-by-step instructions** in explanation — use how-to blocks for those
+
+### How-to parts
+- **Task-focused:** "If you want X, do Y. To get W, run Z."
+- **Oriented on the goal, not UI:** describe what to achieve, not which button to click (unless necessary)
+- **Brief explanations** — enough context, no long theory
+
+### General
+- Short, scannable sections; prefer bullet lists
+- Use `backticks` for code, IDs, technical terms
+- Diagrams (Mermaid, flowcharts) when they aid understanding
+
+---
+
+## What to Avoid
+
+- **Pure step-by-step without context** — explanation first, then how-to
+- **Long theory in how-to** — keep how-to blocks concise
+- **Parameter tables** — link to reference docs instead
+- **Inventing content** — describe what exists, not what might exist
+
+---
+
+## Checklist Before Publishing
+
+- [ ] Title reflects "about/understanding" (explanation), not just action
+- [ ] Context and problem are described
+- [ ] Core concepts are explained
+- [ ] How-to blocks are used where the reader needs to act
+- [ ] Each how-to has: when to use, prerequisites, steps, result, verification
+- [ ] No long theory inside how-to blocks
+- [ ] Related documents are linked
+- [ ] Diagrams added where they help
+
+---
+
+## Output Path
+
+All documents go to: `docs/explanations/`
+
+- Single topic: `docs/explanations/[topic-slug].md`
+- Multi-part: `docs/explanations/[topic-slug]/part-1.md`, `docs/explanations/[topic-slug]/part-2.md`
+
+---
+
+## Placement
+
+- Rule (this file): `.cursor/rules/techwriter.mdc`
